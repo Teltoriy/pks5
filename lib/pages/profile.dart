@@ -23,9 +23,6 @@ class Profile extends StatelessWidget{
           ],
         ),
       ),
-      persistentFooterButtons: [
-        SizedBox.expand(child: TextButton(onPressed: (){}, child: const Text("Выйти", style: TextStyle(fontSize: 18),),))
-      ],
     );
   }
 }
