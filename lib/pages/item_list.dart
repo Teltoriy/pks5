@@ -60,8 +60,8 @@ class ItemViewState extends State<ItemView> {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       backgroundColor: appData.indexofCartItems(widget.productItem) != -1
-                          ? const Color.fromARGB(255, 0, 64, 3)
-                          : const Color.fromARGB(255, 0, 25, 64),
+                          ? const Color.fromARGB(255, 72, 209, 204)
+                          : const Color.fromARGB(255,75, 0, 130),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5.0),
                       ),
