@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pks/components/products.dart';
 
+import '../main.dart';
+
 class ItemView extends StatefulWidget {
   final Product productItem;
   const ItemView({super.key, required this.productItem});
@@ -57,7 +59,7 @@ class ItemViewState extends State<ItemView> {
                 padding: const EdgeInsets.all(16.0),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: addedToCart
+                      backgroundColor: appData.indexofCartItems(widget.productItem) != -1
                           ? const Color.fromARGB(255, 0, 64, 3)
                           : const Color.fromARGB(255, 0, 25, 64),
                       shape: RoundedRectangleBorder(
@@ -65,7 +67,7 @@ class ItemViewState extends State<ItemView> {
                       ),
                       padding: const EdgeInsets.all(10.0)),
                   child: Text(
-                      addedToCart
+                      appData.indexofCartItems(widget.productItem) != -1
                           ? "Добавлено в корзину - ${widget.productItem.Price} руб."
                           : "Добавить в корзину - ${widget.productItem.Price} руб.",
                       style: const TextStyle(
@@ -75,6 +77,17 @@ class ItemViewState extends State<ItemView> {
                   onPressed: () {
                     setState(() {
                       addedToCart = !addedToCart;
+                      int indexInCart = appData.indexofCartItems(widget.productItem);
+                      if(addedToCart){
+                        if (indexInCart==-1){
+                          appData.cartItem.add(widget.productItem);
+                        }
+                      } else {
+                        if (indexInCart !=-1){
+                          appData.cartItem.removeAt(indexInCart);
+                          appData.cartState?.forceUpdateState();
+                        }
+                      }
                     });
                   },
                 ),

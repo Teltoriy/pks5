@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pks/components/global.dart';
+import 'package:pks/pages/cart.dart';
 import 'package:pks/pages/home_page.dart';
 import 'package:pks/pages/favourite.dart';
 import 'package:pks/pages/profile.dart';
@@ -15,7 +16,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   int selectedIndex = 0;
-  List<Widget> pages = [HomePage(), Favourite(),Profile()];
+  List<Widget> pages = [HomePage(), Favourite(),Cart(),Profile()];
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -34,9 +35,11 @@ class _MyAppState extends State<MyApp> {
           items:const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(Icons.medication_liquid_outlined), label: "Товары"),
             BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "Избранное"),
+            BottomNavigationBarItem(icon: Icon(Icons.shopping_cart),label: "Корзина"),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: "Профиль")
           ],
           selectedItemColor: Colors.lightBlueAccent,
+          unselectedItemColor: Colors.blueGrey,
           currentIndex: selectedIndex,
           useLegacyColorScheme: true,
           onTap: (int barItemIndex) => {

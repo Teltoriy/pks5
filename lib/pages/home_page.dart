@@ -12,16 +12,55 @@ class HomePage extends StatefulWidget{
   @override
   createState() => HomePageState();
 }
+
 class HomePageState extends State<HomePage>{
   List<Product> productItem = appData.productItem;
-  @override void initState(){
+
+  @override
+  void initState() {
     super.initState();
     loadProductItem();
   }
-  void addItem(Product item){
+
+  void addItem(Product item) {
     setState(() {
       productItem.add(item);
     });
+  }
+
+  Future<void> _confirmDismiss(BuildContext context, int index) async {
+    final bool? shouldDelete = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Удалить товар?'),
+          content: Text('Вы точно хотите удалить этот товар?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: Text('Нет'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: Text('Да'),
+            ),
+          ],
+        );
+      },
+    );
+    if (shouldDelete == true) {
+      setState(() {
+        productItem.removeAt(index);
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Товар удалён')),
+      );
+    }
   }
 
   @override
@@ -32,19 +71,38 @@ class HomePageState extends State<HomePage>{
         child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              childAspectRatio: 1.05/1),
+              childAspectRatio: 1.05 / 1),
           padding: const EdgeInsets.symmetric(vertical: 0),
           itemCount: productItem.length,
           itemBuilder: (BuildContext context, int index) {
-            return GestureDetector(
-              child: CardPreview(productItem: productItem[index], isFavorite: appData.indexofFavItems(productItem[index]) != -1,),
-              onTap: () {
-                debugPrint('tapped ${productItem[index].Name}');
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ItemView(productItem: productItem[index]))
-                );
+            return Dismissible(
+              key: Key(productItem[index].Name),
+              direction: DismissDirection.endToStart,
+              confirmDismiss: (direction) async {
+                await _confirmDismiss(context, index);
+                return false;
               },
+              background: Container(
+                color: Colors.blue,
+                alignment: Alignment.centerRight,
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Icon(Icons.delete_forever_outlined, color: Colors.white),
+              ),
+              child: GestureDetector(
+                child: CardPreview(
+                  productItem: productItem[index],
+                  isFavorite: appData.indexofFavItems(productItem[index]) != -1,
+                ),
+                onTap: () {
+                  debugPrint('tapped ${productItem[index].Name}');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ItemView(productItem: productItem[index]),
+                    ),
+                  );
+                },
+              ),
             );
           },
         ),
@@ -52,17 +110,21 @@ class HomePageState extends State<HomePage>{
       floatingActionButton: FloatingActionButton(
         tooltip: 'Add Note',
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => AddItem(homeState: this,)));
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddItem(homeState: this)),
+          );
         },
         child: Icon(Icons.add),
       ),
     );
   }
+
   Future<void> loadProductItem() async {
     String jsonString = await rootBundle.loadString('assets/products.json');
     List<dynamic> jsonList = jsonDecode(jsonString);
     setState(() {
       productItem = jsonList.map((json) => Product.fromJson(json)).toList();
     });
-
-  }}
+  }
+}
