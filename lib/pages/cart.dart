@@ -25,7 +25,7 @@ class CartState extends State<Cart> {
   int getTotalSum() {
     int sum = 0;
     cartItems.forEach((product, quantity) {
-      sum += product.Price * quantity;
+      sum += (product.Price! * quantity)!;
     });
     return sum;
   }
@@ -160,7 +160,7 @@ class CartItemWidget extends StatelessWidget {
                   Text(productItem.Name, style: TextStyle(fontSize: 18)),
                   Text("${productItem.Price} руб."),
                   Text("Количество: $quantity"),
-                  Text("Итого: ${productItem.Price * quantity} руб."),
+                  Text("Итого: ${productItem.Price! * quantity} руб."),
                 ],
               ),
             ),

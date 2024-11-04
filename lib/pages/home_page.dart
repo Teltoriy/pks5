@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:pks/components/products.dart';
-import 'dart:convert';
-import 'package:flutter/services.dart';
 import 'package:pks/main.dart';
 import 'package:pks/components/card_prew.dart';
 import 'item_list.dart';
 import 'package:pks/pages/add_product.dart';
+import 'package:pks/components/api_service.dart';
 
-class HomePage extends StatefulWidget{
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
   @override
   createState() => HomePageState();
 }
 
-class HomePageState extends State<HomePage>{
-  List<Product> productItem = appData.productItem;
+class HomePageState extends State<HomePage> {
+  List<Product> productItem = [];
+  final ApiService apiService = ApiService();
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -63,15 +65,33 @@ class HomePageState extends State<HomePage>{
     }
   }
 
+  Future<void> loadProductItem() async {
+    try {
+      List<Product> products = await apiService.getProducts();
+      setState(() {
+        productItem = products;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Ошибка при загрузке данных: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
         padding: const EdgeInsets.symmetric(vertical: 15),
         child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 1.05 / 1),
+              crossAxisCount: 2, childAspectRatio: 1.05 / 1),
           padding: const EdgeInsets.symmetric(vertical: 0),
           itemCount: productItem.length,
           itemBuilder: (BuildContext context, int index) {
@@ -118,13 +138,5 @@ class HomePageState extends State<HomePage>{
         child: Icon(Icons.add),
       ),
     );
-  }
-
-  Future<void> loadProductItem() async {
-    String jsonString = await rootBundle.loadString('assets/products.json');
-    List<dynamic> jsonList = jsonDecode(jsonString);
-    setState(() {
-      productItem = jsonList.map((json) => Product.fromJson(json)).toList();
-    });
   }
 }

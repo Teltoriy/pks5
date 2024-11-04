@@ -9,7 +9,7 @@ class Product {
   String Name;
   String Description;
   String FullDescription;
-  int Price;
+  int? Price;
   String img;
   bool isImageUrl=true;
   factory Product.fromJson(Map<String, dynamic> json) => _$ProductFromJson(json);
