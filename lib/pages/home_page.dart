@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pks/components/products.dart';
-import 'package:pks/main.dart';
-import 'package:pks/components/card_prew.dart';
-import 'item_list.dart';
-import 'package:pks/pages/add_product.dart';
 import 'package:pks/components/api_service.dart';
+import 'package:pks/pages/add_product.dart';
+import '../components/card_prew.dart';
+import '../main.dart';
+import 'item_list.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,10 +24,16 @@ class HomePageState extends State<HomePage> {
     loadProductItem();
   }
 
-  void addItem(Product item) {
-    setState(() {
-      productItem.add(item);
-    });
+  void addItem(Product item) async {
+    try {
+      await apiService.createProduct(item);
+      loadProductItem();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Ошибка: $e')),
+      );
+    }
+    loadProductItem();
   }
 
   Future<void> _confirmDismiss(BuildContext context, int index) async {
@@ -55,13 +61,19 @@ class HomePageState extends State<HomePage> {
       },
     );
     if (shouldDelete == true) {
-      setState(() {
-        productItem.removeAt(index);
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Товар удалён')),
-      );
+      try {
+        await apiService.deleteProduct(productItem[index].id);
+        setState(() {
+          productItem.removeAt(index);
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Товар удалён')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Ошибка при удалении товара: $e')),
+        );
+      }
     }
   }
 
@@ -80,6 +92,20 @@ class HomePageState extends State<HomePage> {
         SnackBar(content: Text('Ошибка при загрузке данных: $e')),
       );
     }
+  }
+
+  void editItem(Product item) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddItem(
+          homeState: this,
+          editingProduct: item,
+        ),
+      ),
+    ).then((_) {
+      loadProductItem(); // Перезагружаем список после редактирования
+    });
   }
 
   @override
@@ -112,9 +138,9 @@ class HomePageState extends State<HomePage> {
                 child: CardPreview(
                   productItem: productItem[index],
                   isFavorite: appData.indexofFavItems(productItem[index]) != -1,
+                  onEdit: () => editItem(productItem[index]), // Передаем функцию редактирования
                 ),
                 onTap: () {
-                  debugPrint('tapped ${productItem[index].Name}');
                   Navigator.push(
                     context,
                     MaterialPageRoute(

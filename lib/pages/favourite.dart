@@ -48,7 +48,7 @@ class FavouriteState extends State<Favourite>
           itemCount: favouriteItems.length,
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
-              child: CardPreview(productItem: favouriteItems[index], isFavorite: true),
+              child: CardPreview(productItem: favouriteItems[index], isFavorite: true, onEdit: () {  },),
               onTap: () {
                 Navigator.push(
                     context,

@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:pks/components/products.dart';
-import 'package:pks/main.dart';
+
+import '../main.dart';
 
 class CardPreview extends StatefulWidget {
   const CardPreview({
-    super.key,
+    Key? key,
     required this.productItem,
     required this.isFavorite,
-  });
+    required this.onEdit,
+  }) : super(key: key);
 
   final Product productItem;
   final bool isFavorite;
+  final VoidCallback onEdit;
 
   @override
   _CardPreviewState createState() => _CardPreviewState();
@@ -72,6 +75,22 @@ class _CardPreviewState extends State<CardPreview> {
               ),
             ],
           ),
+          // Иконка редактирования в левом верхнем углу
+          Positioned(
+            left: 8,
+            top: 8,
+            child: GestureDetector(
+              onTap: () {
+                debugPrint('Edit icon tapped for ${widget.productItem.Name}');
+                widget.onEdit(); // Запускаем редактирование при нажатии
+              },
+              child: const Icon(
+                Icons.edit,
+                color: Colors.blue,
+              ),
+            ),
+          ),
+          // Иконка избранного в правом верхнем углу
           Positioned(
             right: 8,
             top: 8,
@@ -88,7 +107,7 @@ class _CardPreviewState extends State<CardPreview> {
                     if (indexInFav != -1) {
                       appData.favItem.removeAt(indexInFav);
                       appData.favouriteState?.forceUpdateState();
-                      isFavorite=!isFavorite;//Если убрать то при удалении этого элемента следующий элемент потеряет сердечко. Но если оставить то придется 2 раза клацать чтобы убрать сердечко на гл странице
+                      isFavorite = !isFavorite;
                     }
                   }
                 });
