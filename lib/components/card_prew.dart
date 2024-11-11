@@ -75,14 +75,13 @@ class _CardPreviewState extends State<CardPreview> {
               ),
             ],
           ),
-          // Иконка редактирования в левом верхнем углу
           Positioned(
             left: 8,
             top: 8,
             child: GestureDetector(
               onTap: () {
                 debugPrint('Edit icon tapped for ${widget.productItem.Name}');
-                widget.onEdit(); // Запускаем редактирование при нажатии
+                widget.onEdit();
               },
               child: const Icon(
                 Icons.edit,
@@ -90,7 +89,6 @@ class _CardPreviewState extends State<CardPreview> {
               ),
             ),
           ),
-          // Иконка избранного в правом верхнем углу
           Positioned(
             right: 8,
             top: 8,

@@ -104,7 +104,7 @@ class HomePageState extends State<HomePage> {
         ),
       ),
     ).then((_) {
-      loadProductItem(); // Перезагружаем список после редактирования
+      loadProductItem();
     });
   }
 
@@ -138,7 +138,7 @@ class HomePageState extends State<HomePage> {
                 child: CardPreview(
                   productItem: productItem[index],
                   isFavorite: appData.indexofFavItems(productItem[index]) != -1,
-                  onEdit: () => editItem(productItem[index]), // Передаем функцию редактирования
+                  onEdit: () => editItem(productItem[index]),
                 ),
                 onTap: () {
                   Navigator.push(

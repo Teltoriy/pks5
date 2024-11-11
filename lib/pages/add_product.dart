@@ -44,7 +44,6 @@ class _AddItemState extends State<AddItem> {
     super.dispose();
   }
 
-  // Функция для проверки корректности URL
   bool _isValidImageUrl(String url) {
     return Uri.parse(url).isAbsolute;
   }
@@ -78,7 +77,6 @@ class _AddItemState extends State<AddItem> {
               maxLines: 5,
             ),
             SizedBox(height: 10),
-            // Только поле для ввода URL картинки
             TextField(
               controller: imageURLController,
               decoration: InputDecoration(labelText: "URL картинки"),
@@ -101,7 +99,7 @@ class _AddItemState extends State<AddItem> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white),
               ),
               onPressed: () async {
-                // Проверка на корректность URL для изображения
+
                 String imageUrl = imageURLController.text;
 
                 if (!_isValidImageUrl(imageUrl)) {
@@ -119,12 +117,12 @@ class _AddItemState extends State<AddItem> {
                   int.parse(priceController.text),
                   imageUrl,
                 );
-                newItem.isImageUrl = true; // Присваиваем, что изображение по URL
+                newItem.isImageUrl = true;
 
                 if (widget.editingProduct == null) {
-                  widget.homeState.addItem(newItem); // Добавляем новый товар
+                  widget.homeState.addItem(newItem);
                 } else {
-                  // Обновление товара
+
                   try {
                     await apiService.updateProduct(widget.editingProduct!.id, newItem);
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Товар обновлён")));
