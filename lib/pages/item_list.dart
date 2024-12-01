@@ -1,18 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:pks/components/products.dart';
 
-import '../main.dart';
+import '../components/api_service.dart';
 
 class ItemView extends StatefulWidget {
   final Product productItem;
   const ItemView({super.key, required this.productItem});
+
   @override
   createState() => ItemViewState();
 }
 
 class ItemViewState extends State<ItemView> {
   bool addedToCart = false;
+  final ApiService _apiService = ApiService();
+  int userId=1;
 
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfAddedToCart();
+  }
+  Future<void> _checkIfAddedToCart() async {
+    try {
+      final cartItems = await _apiService.getCart(userId);
+      setState(() {
+        addedToCart = cartItems.any((item) => item['product_id'] == widget.productItem.id);
+      });
+    } catch (e) {
+      debugPrint('Error checking if item is in cart: $e');
+    }
+  }
+
+
+  Future<void> _addToCart() async {
+    try {
+      await _apiService.addToCart(widget.productItem.id, userId);
+      setState(() {
+        addedToCart = true;
+      });
+      debugPrint('Product added to cart');
+    } catch (e) {
+      debugPrint('Error adding product to cart: $e');
+    }
+  }
+
+  Future<void> _removeFromCart() async {
+    try {
+      await _apiService.removeFromCart(userId, widget.productItem.id);
+      setState(() {
+        addedToCart = false;
+      });
+      debugPrint('Product removed from cart');
+    } catch (e) {
+      debugPrint('Error removing product from cart: $e');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,21 +70,16 @@ class ItemViewState extends State<ItemView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: widget.productItem.isImageUrl
-                        ? Image.network(widget.productItem.img,
-                        width: double.infinity,
-                        height: MediaQuery.of(context).size.width / 2,
-                        fit: BoxFit.fill)
-                        : Image.asset(widget.productItem.img,
-                        width: double.infinity,
-                        height: MediaQuery.of(context).size.width / 2,
-                        fit: BoxFit.fill),
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.network(widget.productItem.img,
+                          width: double.infinity,
+                          height: MediaQuery.of(context).size.width / 2,
+                          fit: BoxFit.fill)
                   ),
                   const SizedBox(
                     height: 30,
                   ),
-                  Text(widget.productItem.FullDescription,
+                  Text(widget.productItem.Description,
                     style: const TextStyle(fontSize: 22),
                     textAlign: TextAlign.center,
                   ),
@@ -59,7 +98,7 @@ class ItemViewState extends State<ItemView> {
                 padding: const EdgeInsets.all(16.0),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: appData.indexofCartItems(widget.productItem) != -1
+                      backgroundColor: addedToCart
                           ? const Color.fromARGB(255, 72, 209, 204)
                           : const Color.fromARGB(255,75, 0, 130),
                       shape: RoundedRectangleBorder(
@@ -67,7 +106,7 @@ class ItemViewState extends State<ItemView> {
                       ),
                       padding: const EdgeInsets.all(10.0)),
                   child: Text(
-                      appData.indexofCartItems(widget.productItem) != -1
+                      addedToCart
                           ? "Добавлено в корзину - ${widget.productItem.Price} руб."
                           : "Добавить в корзину - ${widget.productItem.Price} руб.",
                       style: const TextStyle(
@@ -75,20 +114,11 @@ class ItemViewState extends State<ItemView> {
                           fontWeight: FontWeight.w600,
                           color: Colors.white)),
                   onPressed: () {
-                    setState(() {
-                      addedToCart = !addedToCart;
-                      int indexInCart = appData.indexofCartItems(widget.productItem);
-                      if(addedToCart){
-                        if (indexInCart==-1){
-                          appData.cartItem.add(widget.productItem);
-                        }
-                      } else {
-                        if (indexInCart !=-1){
-                          appData.cartItem.removeAt(indexInCart);
-                          appData.cartState?.forceUpdateState();
-                        }
-                      }
-                    });
+                    if (addedToCart) {
+                      _removeFromCart();
+                    } else {
+                      _addToCart();
+                    }
                   },
                 ),
               ))

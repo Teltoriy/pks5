@@ -1,7 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pks/components/products.dart';
 
-import '../main.dart';
+import 'api_service.dart';
 
 class CardPreview extends StatefulWidget {
   const CardPreview({
@@ -21,11 +22,53 @@ class CardPreview extends StatefulWidget {
 
 class _CardPreviewState extends State<CardPreview> {
   late bool isFavorite;
+  final ApiService _apiService = ApiService();
+  final int userId = 1;
 
   @override
   void initState() {
     super.initState();
     isFavorite = widget.isFavorite;
+    _checkIfFavorite();
+  }
+  Future<void> _checkIfFavorite() async {
+    try {
+      // Получаем список избранных товаров
+      List<Product> favoriteProducts = await _apiService.getFavorites(userId);
+
+      // Проверяем, есть ли текущий товар в списке избранных
+      setState(() {
+        isFavorite = favoriteProducts.any((product) => product.id == widget.productItem.id);
+      });
+    } catch (e) {
+      debugPrint('Error checking favorite status: $e');
+      // Можете обработать ошибку, например, показать сообщение пользователю
+    }
+  }
+  // Добавление товара в избранное через API
+  Future<void> _addToFavorites() async {
+    try {
+      await _apiService.addToFavorites(widget.productItem.id, userId);
+      setState(() {
+        isFavorite = true;
+      });
+      debugPrint('Product added to favorites');
+    } catch (e) {
+      debugPrint('Error adding to favorites: $e');
+    }
+  }
+
+  // Удаление товара из избранного через API
+  Future<void> _removeFromFavorites() async {
+    try {
+      await _apiService.removeFromFavorites(widget.productItem.id, userId);
+      setState(() {
+        isFavorite = false;
+      });
+      debugPrint('Product removed from favorites');
+    } catch (e) {
+      debugPrint('Error removing from favorites: $e');
+    }
   }
 
   @override
@@ -40,19 +83,12 @@ class _CardPreviewState extends State<CardPreview> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(10.0),
-                child: widget.productItem.isImageUrl
-                    ? Image.network(
+                child:  Image.network(
                   widget.productItem.img,
-                  height: MediaQuery.of(context).size.height / 8,
-                  width: MediaQuery.of(context).size.width / 4,
+                  height: 100,
+                  width:150,
                   fit: BoxFit.fill,
                 )
-                    : Image.asset(
-                  widget.productItem.img,
-                  height: MediaQuery.of(context).size.height / 8,
-                  width: MediaQuery.of(context).size.width / 4,
-                  fit: BoxFit.fill,
-                ),
               ),
               Text(
                 widget.productItem.Name,
@@ -95,19 +131,12 @@ class _CardPreviewState extends State<CardPreview> {
             child: GestureDetector(
               onTap: () {
                 setState(() {
-                  int indexInFav = appData.indexofFavItems(widget.productItem);
-                  isFavorite = !isFavorite;
                   if (isFavorite) {
-                    if (indexInFav == -1) {
-                      appData.favItem.add(widget.productItem);
-                    }
+                    _removeFromFavorites();
                   } else {
-                    if (indexInFav != -1) {
-                      appData.favItem.removeAt(indexInFav);
-                      appData.favouriteState?.forceUpdateState();
-                      isFavorite = !isFavorite;
-                    }
+                    _addToFavorites();
                   }
+
                 });
                 debugPrint(
                     'Heart icon tapped for ${widget.productItem.Name}, favorite: $isFavorite');

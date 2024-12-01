@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:pks/components/products.dart';
 import 'package:pks/main.dart';
 
+import '../components/api_service.dart';
+
 class Cart extends StatefulWidget {
   const Cart({super.key});
 
@@ -11,14 +13,43 @@ class Cart extends StatefulWidget {
 
 class CartState extends State<Cart> {
   Map<Product, int> cartItems = {};
+  ApiService _apiService = ApiService();
 
   @override
   void initState() {
     super.initState();
     appData.cartState = this;
 
-    for (var item in appData.cartItem) {
-      cartItems[item] = 1;
+
+    _loadCart();
+  }
+  int userId=1;
+  Future<void> _loadCart() async {
+    try {
+      final cart = await _apiService.getCart(userId);
+
+      List<int> productIds = [];
+      for (var item in cart) {
+        productIds.add(item['product_id']);
+      }
+
+      final products = await _apiService.getProductsByIds(productIds);
+
+      setState(() {
+        cartItems.clear();
+
+
+        for (var item in cart) {
+          int productId = item['product_id'];
+          int quantity = item['quantity'];
+
+
+          Product product = products.firstWhere((prod) => prod.id == productId);
+          cartItems[product] = quantity;
+        }
+      });
+    } catch (e) {
+      debugPrint("Error loading cart: $e");
     }
   }
 
@@ -36,13 +67,19 @@ class CartState extends State<Cart> {
     }
   }
 
-  void updateQuantity(Product product, int quantity) {
-    if (quantity <= 0) {
+  void updateQuantity(Product product, int newQuantity) async {
+    if (newQuantity <= 0) {
       cartItems.remove(product);
     } else {
-      cartItems[product] = quantity;
+      cartItems[product] = newQuantity;
     }
-    forceUpdateState();
+
+    try {
+      await _apiService.updateCart(userId, product.id, newQuantity);
+      setState(() {});
+    } catch (e) {
+      debugPrint('Error updating cart: $e');
+    }
   }
 
   @override
@@ -86,15 +123,12 @@ class CartState extends State<Cart> {
                     quantity: cartItems[product]!,
                     onRemove: () {
                       setState(() {
-                        int indexInCart = appData.indexofCartItems(product);
-                        if (indexInCart != -1) {
-                          appData.cartItem.removeAt(indexInCart);
-                        }
                         cartItems.remove(product);
                       });
+                      _apiService.removeFromCart(product.id, userId,); // Удаление через API
                     },
                     onUpdate: (newQuantity) {
-                      updateQuantity(product, newQuantity);
+                      updateQuantity(product, newQuantity); // Обновление количества через API
                     },
                   );
                 },

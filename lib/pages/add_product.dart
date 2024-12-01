@@ -16,9 +16,10 @@ class AddItem extends StatefulWidget {
 class _AddItemState extends State<AddItem> {
   late TextEditingController titleController;
   late TextEditingController descriptionController;
-  late TextEditingController fulldescriptionController;
   late TextEditingController imageURLController;
   late TextEditingController priceController;
+  late TextEditingController stockController;
+
 
   final ApiService apiService = ApiService();
   late bool isImageUrl;
@@ -28,19 +29,20 @@ class _AddItemState extends State<AddItem> {
     super.initState();
     titleController = TextEditingController(text: widget.editingProduct?.Name ?? '');
     descriptionController = TextEditingController(text: widget.editingProduct?.Description ?? '');
-    fulldescriptionController = TextEditingController(text: widget.editingProduct?.FullDescription ?? '');
     imageURLController = TextEditingController(text: widget.editingProduct?.img ?? '');
     priceController = TextEditingController(text: widget.editingProduct?.Price.toString() ?? '');
     isImageUrl = widget.editingProduct?.isImageUrl ?? true;
+    stockController = TextEditingController(
+        text: widget.editingProduct?.stock?.toString() ?? '0');
   }
 
   @override
   void dispose() {
     titleController.dispose();
     descriptionController.dispose();
-    fulldescriptionController.dispose();
     imageURLController.dispose();
     priceController.dispose();
+    stockController.dispose();
     super.dispose();
   }
 
@@ -64,12 +66,6 @@ class _AddItemState extends State<AddItem> {
               decoration: InputDecoration(labelText: "Название"),
             ),
             SizedBox(height: 10),
-            TextField(
-              controller: fulldescriptionController,
-              decoration: InputDecoration(labelText: "Краткое описание"),
-              keyboardType: TextInputType.multiline,
-              maxLines: 5,
-            ),
             TextField(
               controller: descriptionController,
               decoration: InputDecoration(labelText: "Описание"),
@@ -102,22 +98,22 @@ class _AddItemState extends State<AddItem> {
 
                 String imageUrl = imageURLController.text;
 
-                if (!_isValidImageUrl(imageUrl)) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text("Некорректный URL изображения"),
-                  ));
-                  return;
-                }
 
                 Product newItem = Product(
                   widget.editingProduct?.id ?? -1,
                   titleController.text,
                   descriptionController.text,
-                  fulldescriptionController.text,
                   int.parse(priceController.text),
                   imageUrl,
+                  int.parse(stockController.text),
                 );
-                newItem.isImageUrl = true;
+                newItem.isImageUrl = false;
+                print("Данные для отправки: ${newItem.toJson()}");
+                print("Title: ${titleController.text}");
+                print("Description: ${descriptionController.text}");
+                print("Image URL: ${imageURLController.text}");
+                print("Price: ${priceController.text}");
+                print("Stock: ${stockController.text}");
 
                 if (widget.editingProduct == null) {
                   widget.homeState.addItem(newItem);
