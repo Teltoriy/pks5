@@ -4,8 +4,13 @@ import 'package:pks/pages/cart.dart';
 import 'package:pks/pages/home_page.dart';
 import 'package:pks/pages/favourite.dart';
 import 'package:pks/pages/profile.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'components/account.dart';
 GlobalData appData = GlobalData();
-void main() {
+Future<void> main() async {
+  await Supabase.initialize(url: 'https://vochvgkwxupvkwfdfpci.supabase.co', anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZvY2h2Z2t3eHVwdmt3ZmRmcGNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMwNjk4OTQsImV4cCI6MjA0ODY0NTg5NH0.AlkZEVl4hHEtpmWAvQ97YqoT_gqaA02Sk3R7h_bCkz0'
+  );
   runApp(const MyApp());
 }
 class MyApp extends StatefulWidget {
@@ -16,7 +21,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   int selectedIndex = 0;
-  List<Widget> pages = [HomePage(), Favourite(),Cart(),Profile()];
+  List<Widget> pages = [HomePage(), Favourite(),Cart(),AuthGate()];
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

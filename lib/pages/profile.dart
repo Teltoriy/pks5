@@ -1,144 +1,110 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../components/auth_service.dart';
+import 'login.dart';
 
-class Profile extends StatefulWidget {
-  const Profile({super.key});
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
 
   @override
-  _ProfileState createState() => _ProfileState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfileState extends State<Profile> {
-  late String name;
-  late String email;
-  late String phone;
-  bool isLoading = true;
+class _ProfilePageState extends State<ProfilePage> {
+  final authService = AuthService();
+  final user = AuthService().getCurrentUser();
+
 
   @override
   void initState() {
     super.initState();
-    _loadProfileData();
   }
 
-  Future<void> _loadProfileData() async {
-    final prefs = await SharedPreferences.getInstance();
+  void _refreshData() {
     setState(() {
-      name = prefs.getString('name') ?? "Пустотреп Телторий";
-      email = prefs.getString('email') ?? "pustotrep@gmail.com";
-      phone = prefs.getString('phone') ?? "+798517813xdd";
-      isLoading = false;
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Профиль"),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: () async {
-              final result = await Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => EditProfile()),
-              );
 
-              if (result == true) {
-                _loadProfileData();
-              }
-            },
-          ),
-        ],
-      ),
-      body: isLoading
-          ? Center(child: Text("Загружаем ваши данные..."))
-          : SingleChildScrollView(
-        child: Container(
-          width: double.infinity,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(height: 100),
-              Icon(Icons.accessible_forward_outlined, size: 200.0),
-              SizedBox(height: 10),
-              Text(name, style: TextStyle(fontSize: 22)),
-              SizedBox(height: 10),
-              Text(email),
-              SizedBox(height: 10),
-              Text(phone),
-              SizedBox(height: 20),
-            ],
-          ),
-        ),
-      ),
+
+  void logout(BuildContext context) async {
+    await authService.signOut();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()),
     );
   }
-}
-
-class EditProfile extends StatefulWidget {
-  @override
-  _EditProfileState createState() => _EditProfileState();
-}
-
-class _EditProfileState extends State<EditProfile> {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _loadProfileData();
-  }
-
-  Future<void> _loadProfileData() async {
-    final prefs = await SharedPreferences.getInstance();
-    nameController.text = prefs.getString('name') ?? "";
-    emailController.text = prefs.getString('email') ?? "";
-    phoneController.text = prefs.getString('phone') ?? "";
-  }
-
-  Future<void> _saveProfileData() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('name', nameController.text);
-    await prefs.setString('email', emailController.text);
-    await prefs.setString('phone', phoneController.text);
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Редактировать профиль"),
+        title: const Text('Профиль'),
+        backgroundColor: Colors.white70,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: InputDecoration(labelText: "Имя"),
+      body: Center(
+
+          child: SingleChildScrollView(
+            child: Center(
+              child: Column(
+                children: [
+                  const SizedBox(height: 100),
+                  const Icon(Icons.account_circle, size: 200),
+                  const SizedBox(height: 20),
+                  // Имя пользователя
+                  Text(
+                    user!.userMetadata!["display_name"] as String,
+                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 20),
+                  // Карточка с информацией
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Card(
+                      color: Colors.white,
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Телефон
+                            Text(
+                              user!.email!,
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  // Кнопка редактирования
+                  const SizedBox(height: 40),
+                  // Кнопка выхода
+                  ElevatedButton.icon(
+                    onPressed: () => logout(context),
+                    icon: const Icon(Icons.logout),
+                    label: const Text('Выйти из аккаунта'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red[300],
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            TextField(
-              controller: emailController,
-              decoration: InputDecoration(labelText: "Email"),
-            ),
-            TextField(
-              controller: phoneController,
-              decoration: InputDecoration(labelText: "Телефон"),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                await _saveProfileData();
-                Navigator.pop(context, true);
-              },
-              child: Text("Сохранить"),
-            ),
-          ],
-        ),
-      ),
+          )
+      )
     );
   }
 }
