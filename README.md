@@ -1,21 +1,15 @@
-# Практика 9 Игнатов Иван ЭФБО-01-22
+# Практика 11 Игнатов Иван ЭФБО-01-22
 # Содержание работы
-### Добавлена возможность удалять, добавлять и редактировать товары с помощью запросов.
-Реализация запросов в postman
-### Обновление товара
-![image](https://github.com/user-attachments/assets/fce22880-50a7-4a10-9089-09a950ba9203)
-### Добавление товара
-![image](https://github.com/user-attachments/assets/a88a91de-ae2c-4aff-9a82-f8af02ed2e4b)
-### Удаление товара
-![image](https://github.com/user-attachments/assets/20f099d5-8dc1-4cdb-bd40-0aed21887162)
-### Реализация запросов в коде приложения
-![image](https://github.com/user-attachments/assets/94d01e63-9d8e-4cf2-8df0-8a5e6b764dca)
-![image](https://github.com/user-attachments/assets/2ef824ef-b7a8-4b71-bdec-cbb6a73d460b)
-![image](https://github.com/user-attachments/assets/605afaff-fbb5-4041-afba-3db655f0b232)
-### Реализаия редактирования товара в приложении
-#### Товар до обновления
-![image](https://github.com/user-attachments/assets/d9280632-f4f4-43b6-b49c-19e5ada7ca55)
-#### Обновление товара
-![image](https://github.com/user-attachments/assets/f1a46d38-5ba3-4edc-81c7-b23e65ebb427)
-#### Вывод обновленного товара
-![image](https://github.com/user-attachments/assets/827c1ffa-e3ea-4971-8d7c-5882b7a9e798)
+## Добавлена авторизация и регистрация пользователей через supabase 
+### Следуя руководству из видео была создана форма регистрации и авторизации
+### Для начала нужно настроить аутентификацию чтобы не нужно было подтверждать почту
+![image](https://github.com/user-attachments/assets/c5b33f33-1db2-40a4-903b-4005080d15ea)
+### Далее устанавливаем зависимости в проект для работ с supabase 
+(flutter pub add supabase_flutter)
+### Cоздаем страницы логина и регистрации
+![image](https://github.com/user-attachments/assets/b657a19b-5937-447e-8742-dca836279307)
+![image](https://github.com/user-attachments/assets/b3e1fe51-39e7-4a38-8bc3-bb1c3170ea1c)
+### Проверяем что пользователь создан в базе данных
+![image](https://github.com/user-attachments/assets/dd462a16-afb8-48af-a5f5-a66ba8545672)
+### Далее заходим используя логин и пароль
+![image](https://github.com/user-attachments/assets/47963ad8-ee16-4ae6-808f-12ee87f75296)
