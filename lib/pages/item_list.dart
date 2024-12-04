@@ -14,7 +14,7 @@ class ItemView extends StatefulWidget {
 class ItemViewState extends State<ItemView> {
   bool addedToCart = false;
   final ApiService _apiService = ApiService();
-  int userId=1;
+  int userId=10;
 
 
   @override
@@ -48,7 +48,7 @@ class ItemViewState extends State<ItemView> {
 
   Future<void> _removeFromCart() async {
     try {
-      await _apiService.removeFromCart(userId, widget.productItem.id);
+      await _apiService.removeFromCart( widget.productItem.id, userId);
       setState(() {
         addedToCart = false;
       });

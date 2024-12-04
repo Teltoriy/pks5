@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pks/components/products.dart';
 import 'package:pks/components/api_service.dart';
 import 'package:pks/pages/add_product.dart';
+import 'package:pks/pages/search_page.dart';
 import '../components/card_prew.dart';
 import '../main.dart';
 import 'item_list.dart';
@@ -111,6 +112,20 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Главная'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SearchPage()),
+              );
+            },
+          ),
+        ],
+      ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : Padding(

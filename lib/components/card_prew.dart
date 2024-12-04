@@ -23,7 +23,7 @@ class CardPreview extends StatefulWidget {
 class _CardPreviewState extends State<CardPreview> {
   late bool isFavorite;
   final ApiService _apiService = ApiService();
-  final int userId = 1;
+  final int userId = 10;
 
   @override
   void initState() {
@@ -42,7 +42,7 @@ class _CardPreviewState extends State<CardPreview> {
       });
     } catch (e) {
       debugPrint('Error checking favorite status: $e');
-      // Можете обработать ошибку, например, показать сообщение пользователю
+
     }
   }
   // Добавление товара в избранное через API

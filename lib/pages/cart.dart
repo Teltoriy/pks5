@@ -23,7 +23,7 @@ class CartState extends State<Cart> {
 
     _loadCart();
   }
-  int userId=1;
+  int userId=10;
   Future<void> _loadCart() async {
     try {
       final cart = await _apiService.getCart(userId);

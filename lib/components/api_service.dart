@@ -1,12 +1,10 @@
-
-
 import 'package:dio/dio.dart';
 import 'package:pks/components/products.dart';
 
 class ApiService {
   final Dio _dio = Dio();
   final String BaseURL = 'http://192.168.1.2:8080'; // Поменять в случае смены сети
-  final int userId = 1;
+  final int userId = 10;
 
   Future<List<Product>> getProducts() async {
     try {
@@ -154,7 +152,7 @@ class ApiService {
     try {
       final response = await _dio.post(
         '$BaseURL/carts/$userId',
-        data: {'product_id': productId},
+        data: {'product_id': productId, 'quantity':1},
       );
       if (response.statusCode != 200) {
         throw Exception('Failed to add to cart');
@@ -179,17 +177,13 @@ class ApiService {
 
   Future<void> updateCart(int userId, int productId, int quantity) async {
     try {
-      print(
-          'Отправляем PUT запрос на URL: http://192.168.190.141:8080/carts/$userId');
-      print('Данные запроса: {product_id: $productId, quantity: $quantity}');
-
       final data = {
         'product_id': productId,
         'quantity': quantity,
       };
 
       final response = await Dio().put(
-        'http://192.168.1.2:8080/carts/$userId',
+        '$BaseURL/carts/$userId',
         data: data,
       );
 
