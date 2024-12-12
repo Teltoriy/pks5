@@ -1,10 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:pks/components/products.dart';
+import 'package:pks/components/user_model.dart';
+
+import 'order_model.dart';
 
 class ApiService {
   final Dio _dio = Dio();
-  final String BaseURL = 'http://192.168.1.2:8080'; // Поменять в случае смены сети
-  final int userId = 10;
+  final String BaseURL = 'http://192.168.190.1:8080'; // Поменять в случае смены сети
 
   Future<List<Product>> getProducts() async {
     try {
@@ -63,15 +65,12 @@ class ApiService {
     }
   }
 
-  // Работа с избранным
   Future<List<Product>> getFavorites(int userId) async {
     try {
-      // Получаем список избранных ID
       final response = await _dio.get('$BaseURL/favorites/$userId');
       if (response.statusCode == 200) {
         List<dynamic> favoriteIds = response.data;
 
-        // Для каждого ID получаем данные о товаре
         List<Product> favoriteProducts = [];
         for (var favorite in favoriteIds) {
           int productId = favorite['product_id'];
@@ -93,7 +92,7 @@ class ApiService {
   Future<void> addToFavorites(int productId, int id) async {
     try {
       final response = await _dio.post(
-        '$BaseURL/favorites/$userId',
+        '$BaseURL/favorites/$id',
         data: {'product_id': productId},
       );
       if (response.statusCode != 200) {
@@ -107,7 +106,7 @@ class ApiService {
   Future<void> removeFromFavorites(int productId, int id) async {
     try {
       final response = await _dio.delete(
-        '$BaseURL/favorites/$userId/$productId',
+        '$BaseURL/favorites/$id/$productId',
       );
       if (response.statusCode != 200) {
         throw Exception('Failed to remove from favorites');
@@ -194,6 +193,97 @@ class ApiService {
       } else {
         print('Ошибка обновления корзины: $e');
       }
+    }
+  }
+  //получение списка заказов
+  Future<List<Order>> getOrders(int userId) async {
+    print("getOrders function called id=$userId");
+    try {
+      final response =
+      await _dio.get('$BaseURL/orders/$userId');
+      if (response.statusCode == 200) {
+        List<Order> orders = (response.data as List)
+            .map((product) => Order.fromJson(product))
+            .toList();
+        return orders;
+      } else {
+        throw Exception('Failed to load orders');
+      }
+    } catch (e) {
+      throw Exception('Error fetching orders: $e');
+    }
+  }
+
+  //создание заказа
+  Future<void> createOrder(Order order) async {
+    print("createOrder function called total=${order.total}");
+    print(
+        "createOrder function called order.products[0].id=${order.products[0].id}");
+    try {
+      final response = await _dio.post(
+        '$BaseURL/orders/${order.userId}',
+        data: order.toJson(),
+      );
+      print(order.toJson());
+      if (response.statusCode == 201) {
+        return;
+      } else {
+        throw Exception('Failed to create order');
+      }
+    } catch (e) {
+      throw Exception('Error creating order: $e');
+    }
+  }
+  Future<void> createUser(User user) async {
+    print("createUser function called");
+    try {
+      final response =
+      await _dio.post('$BaseURL/users', data: {
+        'username': user.name,
+        'email': user.email
+      });
+      if (response.statusCode == 201) {
+        return;
+      } else {
+        throw Exception('Failed to create user');
+      }
+    } catch (e) {
+      throw Exception('Error creating user: $e');
+    }
+  }
+
+//найти пользователя по id
+  Future<User> getUserById(int id) async {
+    print("getUserById function called id=$id");
+    try {
+      final response = await _dio.get('$BaseURL/users/$id');
+      if (response.statusCode == 200) {
+        User data = User.fromJson(response.data);
+        print(data);
+        return data;
+      } else {
+        throw Exception('Failed to load user data');
+      }
+    } catch (e) {
+      throw Exception('Error fetching user data: $e');
+    }
+  }
+
+  //найти пользователя по email
+  Future<User> getUserByEmail(String? email) async {
+    print("getUserByEmail function called email=$email");
+    try {
+      final response =
+      await _dio.get('$BaseURL/users/${email.toString()}');
+      if (response.statusCode == 200) {
+        User data = User.fromJson(response.data);
+        print(data);
+        return data;
+      } else {
+        throw Exception('Failed to load user data');
+      }
+    } catch (e) {
+      throw Exception('Error fetching user data: $e');
     }
   }
 }

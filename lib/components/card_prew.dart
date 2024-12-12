@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pks/components/products.dart';
+import 'package:pks/components/user_model.dart';
 
 import 'api_service.dart';
+import 'auth_service.dart';
 
 class CardPreview extends StatefulWidget {
   const CardPreview({
@@ -23,13 +25,22 @@ class CardPreview extends StatefulWidget {
 class _CardPreviewState extends State<CardPreview> {
   late bool isFavorite;
   final ApiService _apiService = ApiService();
-  final int userId = 10;
+  late Future<User> user;
+  late int userId;
 
   @override
   void initState() {
     super.initState();
     isFavorite = widget.isFavorite;
-    _checkIfFavorite();
+    user = ApiService().getUserByEmail(AuthService().getCurrentUserEmail());
+    user.then((currentUser) {
+      setState(() {
+        userId = currentUser.id;
+      });
+      _checkIfFavorite();
+    }).catchError((e) {
+      debugPrint("Error fetching user: $e");
+    });
   }
   Future<void> _checkIfFavorite() async {
     try {

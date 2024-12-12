@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:pks/components/products.dart';
 
 import '../components/api_service.dart';
+import '../components/auth_service.dart';
+import '../components/user_model.dart';
 
 class ItemView extends StatefulWidget {
   final Product productItem;
@@ -14,13 +16,18 @@ class ItemView extends StatefulWidget {
 class ItemViewState extends State<ItemView> {
   bool addedToCart = false;
   final ApiService _apiService = ApiService();
-  int userId=10;
+  late Future<User> user;
+  late int userId;
 
 
   @override
   void initState() {
     super.initState();
-    _checkIfAddedToCart();
+    user = ApiService().getUserByEmail(AuthService().getCurrentUserEmail());
+    user.then((currentUser) {
+      userId = currentUser.id;
+      _checkIfAddedToCart();
+    });
   }
   Future<void> _checkIfAddedToCart() async {
     try {

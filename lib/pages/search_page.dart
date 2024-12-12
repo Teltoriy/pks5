@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../components/api_service.dart';
+import '../components/auth_service.dart';
 import '../components/products.dart';
+import '../components/user_model.dart';
 import 'item_list.dart';
 
 class SearchPage extends StatefulWidget {
@@ -14,18 +16,28 @@ class _SearchPageState extends State<SearchPage> {
   final ApiService apiService = ApiService();
   List<Product> allProducts = [];
   List<Product> filteredProducts = [];
-  Set<int> favoriteProductIds = {}; // IDs избранных товаров
+  Set<int> favoriteProductIds = {};
   bool isLoading = true;
   String searchQuery = '';
   bool isSearchByName = true;
   String sortOrder = 'По возрастанию';
-  final int userId = 10; // ID пользователя (можно заменить)
+  late Future<User> user;
+  late int userId;
 
   @override
   void initState() {
     super.initState();
-    fetchProducts();
-    fetchFavorites();
+
+    user = ApiService().getUserByEmail(AuthService().getCurrentUserEmail());
+    user.then((currentUser) {
+      setState(() {
+        userId = currentUser.id;
+      });
+      fetchProducts();
+      fetchFavorites();
+    }).catchError((e) {
+      debugPrint("Error fetching user: $e");
+    });
   }
 
   Future<void> fetchProducts() async {

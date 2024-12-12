@@ -1,11 +1,10 @@
-import 'dart:convert';
 import 'package:pks/pages/item_list.dart';
 import 'package:pks/components/products.dart';
-import 'package:pks/main.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../components/api_service.dart';
+import '../components/auth_service.dart';
 import '../components/card_prew.dart';
+import '../components/user_model.dart';
 
 class Favourite extends StatefulWidget{
   const Favourite({super.key});
@@ -14,18 +13,28 @@ class Favourite extends StatefulWidget{
 }
 class FavouriteState extends State<Favourite> {
   List<Product> favouriteItems = [];
-  int UserId=10;
+  late Future<User> user;
+  late int userId;
 
   @override
   void initState() {
     super.initState();
-    _fetchFavorites();
+
+    user = ApiService().getUserByEmail(AuthService().getCurrentUserEmail());
+    user.then((currentUser) {
+      setState(() {
+        userId = currentUser.id;
+      });
+      _fetchFavorites();
+    }).catchError((e) {
+      debugPrint("Error fetching user: $e");
+    });
   }
 
   Future<void> _fetchFavorites() async {
     try {
       ApiService apiService = ApiService();
-      List<Product> products = await apiService.getFavorites(UserId);
+      List<Product> products = await apiService.getFavorites(userId);
       setState(() {
         favouriteItems = products;
       });

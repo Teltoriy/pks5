@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pks/components/products.dart';
-import 'package:pks/main.dart';
-
 import '../components/api_service.dart';
+import '../components/auth_service.dart';
+import '../components/user_model.dart';
+import 'package:pks/components/order_model.dart';
 
 class Cart extends StatefulWidget {
   const Cart({super.key});
@@ -14,16 +15,25 @@ class Cart extends StatefulWidget {
 class CartState extends State<Cart> {
   Map<Product, int> cartItems = {};
   ApiService _apiService = ApiService();
+  late Future<User> user;
+  late int userId;
 
   @override
   void initState() {
     super.initState();
-    appData.cartState = this;
 
+    user = ApiService().getUserByEmail(AuthService().getCurrentUserEmail());
+    user.then((currentUser) {
+      setState(() {
+        userId = currentUser.id;
+      });
 
-    _loadCart();
+      _loadCart();
+    }).catchError((e) {
+      debugPrint("Error fetching user: $e");
+    });
   }
-  int userId=10;
+
   Future<void> _loadCart() async {
     try {
       final cart = await _apiService.getCart(userId);
@@ -38,11 +48,9 @@ class CartState extends State<Cart> {
       setState(() {
         cartItems.clear();
 
-
         for (var item in cart) {
           int productId = item['product_id'];
           int quantity = item['quantity'];
-
 
           Product product = products.firstWhere((prod) => prod.id == productId);
           cartItems[product] = quantity;
@@ -82,6 +90,38 @@ class CartState extends State<Cart> {
     }
   }
 
+  // Метод для оформления заказа
+  Future<void> _placeOrder() async {
+    double total = getTotalSum().toDouble();
+    List<Product> productsList = cartItems.keys.toList();
+
+    Order order = Order(
+      orderId: DateTime.now().millisecondsSinceEpoch,
+      userId: userId,
+      total: total,
+      status: 'pending',
+      products: productsList,
+    );
+
+    try {
+
+      await _apiService.createOrder(order);
+
+      for (var product in cartItems.keys) {
+        await _apiService.removeFromCart(product.id, userId);
+      }
+
+      setState(() {
+        cartItems.clear(); // Очистим корзину в приложении
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Заказ оформлен!')));
+    } catch (e) {
+      debugPrint('Error placing order: $e');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Ошибка при оформлении заказа')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,9 +135,9 @@ class CartState extends State<Cart> {
                 foregroundColor: Colors.white, backgroundColor: Colors.green,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               ),
-              onPressed: () {},
+              onPressed: _placeOrder, // Обрабатываем оформление заказа
               child: Text(
-                "Оплатить",
+                "Оформить заказ",
                 style: TextStyle(fontSize: 18),
               ),
             ),
@@ -125,7 +165,7 @@ class CartState extends State<Cart> {
                       setState(() {
                         cartItems.remove(product);
                       });
-                      _apiService.removeFromCart(product.id, userId,); // Удаление через API
+                      _apiService.removeFromCart(product.id, userId); // Удаление через API
                     },
                     onUpdate: (newQuantity) {
                       updateQuantity(product, newQuantity); // Обновление количества через API

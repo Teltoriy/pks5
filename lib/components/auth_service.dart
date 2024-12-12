@@ -5,21 +5,22 @@ class AuthService {
 
   Future<AuthResponse> signInWithEmailPassword(
       String email, String password) async {
-    return await _supabase.auth.signInWithPassword(email: email, password: password);
+    return await _supabase.auth
+        .signInWithPassword(email: email, password: password);
   }
 
   Future<AuthResponse> signUpWithEmailPassword(
-      String email, String password, String name) async {
-    return await _supabase.auth.signUp(email: email, password: password, data: {"display_name": name});
+      String email, String password) async {
+    return await _supabase.auth.signUp(email: email, password: password);
   }
 
   Future<void> signOut() async {
-    await _supabase.auth.signOut();
+    return await _supabase.auth.signOut();
   }
 
-  User? getCurrentUser() {
+  String? getCurrentUserEmail() {
     final session = _supabase.auth.currentSession;
     final user = session?.user;
-    return user;
+    return user?.email;
   }
 }
