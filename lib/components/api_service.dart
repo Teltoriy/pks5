@@ -195,7 +195,6 @@ class ApiService {
       }
     }
   }
-  //получение списка заказов
   Future<List<Order>> getOrders(int userId) async {
     print("getOrders function called id=$userId");
     try {
@@ -214,7 +213,6 @@ class ApiService {
     }
   }
 
-  //создание заказа
   Future<void> createOrder(Order order) async {
     print("createOrder function called total=${order.total}");
     print(
@@ -252,7 +250,6 @@ class ApiService {
     }
   }
 
-//найти пользователя по id
   Future<User> getUserById(int id) async {
     print("getUserById function called id=$id");
     try {
@@ -269,7 +266,6 @@ class ApiService {
     }
   }
 
-  //найти пользователя по email
   Future<User> getUserByEmail(String? email) async {
     print("getUserByEmail function called email=$email");
     try {

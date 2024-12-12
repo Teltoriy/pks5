@@ -44,10 +44,8 @@ class _CardPreviewState extends State<CardPreview> {
   }
   Future<void> _checkIfFavorite() async {
     try {
-      // Получаем список избранных товаров
       List<Product> favoriteProducts = await _apiService.getFavorites(userId);
 
-      // Проверяем, есть ли текущий товар в списке избранных
       setState(() {
         isFavorite = favoriteProducts.any((product) => product.id == widget.productItem.id);
       });
@@ -56,7 +54,6 @@ class _CardPreviewState extends State<CardPreview> {
 
     }
   }
-  // Добавление товара в избранное через API
   Future<void> _addToFavorites() async {
     try {
       await _apiService.addToFavorites(widget.productItem.id, userId);
@@ -69,7 +66,6 @@ class _CardPreviewState extends State<CardPreview> {
     }
   }
 
-  // Удаление товара из избранного через API
   Future<void> _removeFromFavorites() async {
     try {
       await _apiService.removeFromFavorites(widget.productItem.id, userId);
