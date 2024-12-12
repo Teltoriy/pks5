@@ -1,15 +1,18 @@
-# Практика 11 Игнатов Иван ЭФБО-01-22
+# Практика 13 Игнатов Иван ЭФБО-01-22
 # Содержание работы
-## Добавлена авторизация и регистрация пользователей через supabase 
-### Следуя руководству из видео была создана форма регистрации и авторизации
-### Для начала нужно настроить аутентификацию чтобы не нужно было подтверждать почту
-![image](https://github.com/user-attachments/assets/c5b33f33-1db2-40a4-903b-4005080d15ea)
-### Далее устанавливаем зависимости в проект для работ с supabase 
-(flutter pub add supabase_flutter)
-### Cоздаем страницы логина и регистрации
-![image](https://github.com/user-attachments/assets/b657a19b-5937-447e-8742-dca836279307)
-![image](https://github.com/user-attachments/assets/b3e1fe51-39e7-4a38-8bc3-bb1c3170ea1c)
-### Проверяем что пользователь создан в базе данных
-![image](https://github.com/user-attachments/assets/dd462a16-afb8-48af-a5f5-a66ba8545672)
-### Далее заходим используя логин и пароль
-![image](https://github.com/user-attachments/assets/47963ad8-ee16-4ae6-808f-12ee87f75296)
+## Добавлена страница с отображением заказов для каждого пользователя. Кнопка оформить заказ на странице корзины теперь работает.
+### Набираем товары в корзину
+![image](https://github.com/user-attachments/assets/9fe882cf-d415-484e-ab6b-4c69fa81ef08)
+### Нажимаем на кнопку
+![image](https://github.com/user-attachments/assets/61595d60-0546-424b-b94a-880651e275c1)
+### Переходим в профиль
+![image](https://github.com/user-attachments/assets/0625f71c-4f72-4fa4-b2f4-3ded7bccde79)
+### Переходим в заказы
+![image](https://github.com/user-attachments/assets/cec41a25-0e8e-4129-aed9-62a36e22c4de)
+
+![image](https://github.com/user-attachments/assets/1998537f-430d-402a-a4d2-e3c31bd195fa)
+
+### Заказы у каждого пользователя свои
+![image](https://github.com/user-attachments/assets/a4459709-66fb-47c2-a1b6-71812e77fb9d)
+
+![image](https://github.com/user-attachments/assets/9cf5c4c1-d637-413e-8b35-03c50a6af888)
