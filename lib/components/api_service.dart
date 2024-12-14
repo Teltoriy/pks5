@@ -1,12 +1,12 @@
 import 'package:dio/dio.dart';
-import 'package:pks/components/products.dart';
-import 'package:pks/components/user_model.dart';
+import 'package:pks/models/products.dart';
 
-import 'order_model.dart';
+import '../models/order_model.dart';
+import '../models/user_model.dart';
 
 class ApiService {
   final Dio _dio = Dio();
-  final String BaseURL = 'http://192.168.190.1:8080'; // Поменять в случае смены сети
+  final String BaseURL = 'http://192.168.1.2:8080'; // Поменять в случае смены сети
 
   Future<List<Product>> getProducts() async {
     try {

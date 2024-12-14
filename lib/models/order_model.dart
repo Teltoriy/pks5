@@ -1,4 +1,4 @@
-import 'package:pks/components/products.dart';
+import 'package:pks/models/products.dart';
 
 class Order {
   final int orderId;

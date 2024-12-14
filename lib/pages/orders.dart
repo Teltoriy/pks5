@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../components/api_service.dart';
-import '../components/order_model.dart';
-import '../components/user_model.dart';
+import '../models/order_model.dart';
+import '../models/user_model.dart';
 
 class MyOrders extends StatefulWidget {
   const MyOrders({super.key, required this.userId});

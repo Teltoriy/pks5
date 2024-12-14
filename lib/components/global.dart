@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:pks/components/products.dart';
+import 'package:pks/models/products.dart';
 import 'package:pks/pages/favourite.dart';
 
 import '../pages/cart.dart';

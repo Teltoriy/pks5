@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pks/components/products.dart';
-import 'package:pks/components/user_model.dart';
+import 'package:pks/models/products.dart';
 
+import '../models/user_model.dart';
 import 'api_service.dart';
 import 'auth_service.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../components/api_service.dart';
 import '../components/auth_service.dart';
-import '../components/user_model.dart';
+import '../models/user_model.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -34,7 +34,7 @@ class _RegisterPageState extends State<RegisterPage> {
     }
 
     try {
-      await authService.signUpWithEmailPassword(email, password);
+      await authService.signUpWithEmailandPassword(email, password);
       await ApiService().createUser(User(
           id: 0,
           name: nameController.text,

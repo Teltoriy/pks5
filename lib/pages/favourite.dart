@@ -1,10 +1,11 @@
 import 'package:pks/pages/item_list.dart';
-import 'package:pks/components/products.dart';
+import 'package:pks/models/products.dart';
 import 'package:flutter/material.dart';
 import '../components/api_service.dart';
 import '../components/auth_service.dart';
 import '../components/card_prew.dart';
-import '../components/user_model.dart';
+import '../models/user_model.dart';
+
 
 class Favourite extends StatefulWidget{
   const Favourite({super.key});

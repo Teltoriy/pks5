@@ -19,7 +19,7 @@ class _LoginPageState extends State<LoginPage> {
     final password = passwordController.text.trim();
 
     try {
-      await authService.signInWithEmailPassword(email, password);
+      await authService.signInWithEmailandPassword(email, password);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

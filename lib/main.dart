@@ -1,17 +1,24 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:pks/components/auth_service.dart';
 import 'package:pks/components/global.dart';
+import 'package:pks/firebase_options.dart';
 import 'package:pks/pages/cart.dart';
 import 'package:pks/pages/home_page.dart';
 import 'package:pks/pages/favourite.dart';
 import 'package:pks/pages/profile.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:provider/provider.dart';
+
 
 import 'components/account.dart';
 GlobalData appData = GlobalData();
 Future<void> main() async {
-  await Supabase.initialize(url: 'https://vochvgkwxupvkwfdfpci.supabase.co', anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZvY2h2Z2t3eHVwdmt3ZmRmcGNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMwNjk4OTQsImV4cCI6MjA0ODY0NTg5NH0.AlkZEVl4hHEtpmWAvQ97YqoT_gqaA02Sk3R7h_bCkz0'
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  runApp(
+    ChangeNotifierProvider(create: (context)=>AuthService(),
+    child: const MyApp())
   );
-  runApp(const MyApp());
 }
 class MyApp extends StatefulWidget {
   const MyApp({super.key});

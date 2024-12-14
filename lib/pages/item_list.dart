@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:pks/components/products.dart';
+import 'package:pks/models/products.dart';
 
 import '../components/api_service.dart';
 import '../components/auth_service.dart';
-import '../components/user_model.dart';
+import '../models/user_model.dart';
 
 class ItemView extends StatefulWidget {
   final Product productItem;

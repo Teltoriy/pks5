@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../components/api_service.dart';
 import '../components/auth_service.dart';
-import '../components/products.dart';
-import '../components/user_model.dart';
+import '../models/products.dart';
+import '../models/user_model.dart';
 import 'item_list.dart';
 
 class SearchPage extends StatefulWidget {

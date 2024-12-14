@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import '../components/api_service.dart';
 import '../components/auth_service.dart';
-import '../components/user_model.dart';
 import 'package:pks/pages/orders.dart';
-import 'login.dart';
+
+import '../models/user_model.dart';
+import 'chat_list.dart';
+import 'chat_page.dart';
+
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -33,10 +36,6 @@ class _ProfilePageState extends State<ProfilePage> {
   void logout(BuildContext context) async {
     try {
       await authService.signOut();
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginPage()),
-      );
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
@@ -50,6 +49,23 @@ class _ProfilePageState extends State<ProfilePage> {
       context,
       MaterialPageRoute(builder: (context) => MyOrders(userId: userId)),
     );
+  }
+
+  void _navigateToChat(BuildContext context, int userId) {
+    if (userId == 3) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ChatList()),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ChatPage(
+          receiverUserEmail: 'xdd@mail.com',
+          receiverUserID: '055aosc3hxXAWOBv6TpjL5fMVIY2',
+        ),),
+      );
+    }
   }
 
   @override
@@ -79,14 +95,12 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 children: [
                   const SizedBox(height: 40),
-                    Icon(
-                      Icons.accessible_forward_outlined,
-                      size: 200,
-                      color: Colors.black,
-                    ),
+                  Icon(
+                    Icons.accessible_forward_outlined,
+                    size: 200,
+                    color: Colors.black,
+                  ),
                   const SizedBox(height: 20),
-
-
                   Text(
                     userData.name,
                     style: const TextStyle(
@@ -96,7 +110,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Card(
@@ -115,9 +128,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   const SizedBox(height: 10),
-
                   ElevatedButton(
-                    onPressed: () => _navigateToOrdersScreen(context, userData.id),
+                    onPressed: () =>
+                        _navigateToOrdersScreen(context, userData.id),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.orangeAccent,
                       padding: const EdgeInsets.symmetric(
@@ -137,8 +150,30 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 20),
+                  // Новая кнопка "Чатик"
+                  ElevatedButton(
+                    onPressed: () => _navigateToChat(context, userData.id),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 40,
+                        vertical: 15,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text(
+                      'Чатик',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 40),
-
                   ElevatedButton.icon(
                     onPressed: () => logout(context),
                     icon: const Icon(Icons.logout),

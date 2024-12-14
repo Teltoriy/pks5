@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pks/components/products.dart';
+import 'package:pks/models/products.dart';
 import 'package:pks/components/api_service.dart';
 import 'package:pks/pages/add_product.dart';
 import 'package:pks/pages/search_page.dart';

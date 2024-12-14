@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pks/pages/profile.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../pages/login.dart';
 
@@ -10,19 +10,9 @@ class AuthGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: Supabase.instance.client.auth.onAuthStateChange,
+      stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-
-        final session = snapshot.hasData ? snapshot.data!.session : null;
-
-        if (session != null) {
+        if (snapshot.hasData) {
           return ProfilePage();
         } else {
           return LoginPage();
@@ -31,3 +21,4 @@ class AuthGate extends StatelessWidget {
     );
   }
 }
+// Есть неприятный баг, если выходить из профиля то приложение ломается и его надо презапускать, в чем проблема не понимаю.
